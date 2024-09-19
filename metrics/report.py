@@ -1,22 +1,40 @@
 import glob, json, os
 
 from collections import Counter
-from swebench.harness.constants import (
-    APPLY_PATCH_FAIL,
-    INSTALL_FAIL,
-    KEY_INSTANCE_ID,
-    RESET_FAILED,
-    TESTS_ERROR,
-    TESTS_TIMEOUT,
-    PatchType,
-)
-from swebench.metrics.constants import (
+KEY_INSTANCE_ID = "instance_id"
+KEY_MODEL = "model_name_or_path"
+KEY_PREDICTION = "model_patch"
+
+# Constants - Logging
+APPLY_PATCH_FAIL = ">>>>> Patch Apply Failed"
+APPLY_PATCH_PASS = ">>>>> Applied Patch"
+INSTALL_FAIL = ">>>>> Init Failed"
+INSTALL_PASS = ">>>>> Init Succeeded"
+INSTALL_TIMEOUT = ">>>>> Init Timed Out"
+RESET_FAILED = ">>>>> Reset Failed"
+TESTS_ERROR = ">>>>> Tests Errored"
+TESTS_FAILED = ">>>>> Some Tests Failed"
+TESTS_PASSED = ">>>>> All Tests Passed"
+TESTS_TIMEOUT = ">>>>> Tests Timed Out"
+
+# Constants - Patch Types
+class PatchType(Enum):
+    PATCH_GOLD = "gold"
+    PATCH_PRED = "pred"
+    PATCH_PRED_TRY = "pred_try"
+    PATCH_PRED_MINIMAL = "pred_minimal"
+    PATCH_PRED_MINIMAL_TRY = "pred_minimal_try"
+    PATCH_TEST = "test"
+
+    def __str__(self):
+        return self.value
+from constants import (
     FAIL_TO_FAIL,
     FAIL_TO_PASS,
     PASS_TO_FAIL,
     PASS_TO_PASS,
 )
-from swebench.metrics.getters import (
+from getters import (
     get_file_name_from_lp,
     get_logs_eval,
     get_id_from_lp,
@@ -24,7 +42,7 @@ from swebench.metrics.getters import (
     test_passed,
     get_eval_refs,
 )
-from swebench.metrics.metrics import (
+from metrics import (
     compute_fail_to_pass_unweighted,
     compute_fail_to_pass_weighted,
     compute_pass_to_pass_unweighted,

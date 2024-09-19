@@ -1,6 +1,6 @@
 import re
 
-from swebench.metrics.constants import TestStatus
+from constants import TestStatus
 
 
 def parse_log_pytest(log: str) -> dict:
@@ -169,6 +169,9 @@ def parse_log_sympy(log):
     return test_status_map
 
 
+
+
+
 parse_log_astroid = parse_log_pytest
 parse_log_flask = parse_log_pytest
 parse_log_marshmallow = parse_log_pytest
@@ -185,6 +188,8 @@ parse_log_pylint = parse_log_pytest_options
 parse_log_astropy = parse_log_pytest_v2
 parse_log_scikit = parse_log_pytest_v2
 parse_log_sphinx = parse_log_pytest_v2
+
+parse_log_pytorch = parse_log_pytest
 
 
 MAP_REPO_TO_PARSER = {
@@ -206,4 +211,5 @@ MAP_REPO_TO_PARSER = {
     "sqlfluff/sqlfluff": parse_log_sqlfluff,
     "sphinx-doc/sphinx": parse_log_sphinx,
     "sympy/sympy": parse_log_sympy,
+    "pytorch/pytorch": parse_log_pytorch
 }

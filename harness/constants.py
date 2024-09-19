@@ -639,4 +639,36 @@ MAP_REPO_VERSION_TO_CONDA_LINK = {
     },
 }
 
-DEFAULT_CONDA_LINK = "py39_23.10.0-1"
+DEFAULT_CONDA_LINK = "py39_23.10.0-1"# Appended constants for pytorch/pytorch
+MAP_VERSION_TO_INSTALL.update(
+{
+    'pytorch/pytorch': {
+        k: {
+            "python": "3.9",
+            "install": "USE_KINETO=0 BUILD_CAFFE2=0 USE_DISTRIBUTED=0 USE_NCCL=0 BUILD_TEST=0 USE_XNNPACK=0 USE_FBGEMM=0 USE_QNNPACK=0 USE_MKLDNN=0 USE_MIOPEN=0 USE_NNPACK=0 BUILD_CAFFE2_OPS=0 USE_TENSORPIPE=0 python setup.py develop",
+            "packages": 'cmake ninja mkl mkl-include expecttest hypothesis pytest "numpy<2.0" pyyaml conda-forge::libstdcxx-ng=12',
+        }
+        for k in ['46422', '49675', '51938', '53077', '59979', '60905', '62596', '63128', '63371', '63418', '64271', '65924', '65926', '66918', '66969', '68130', '69791', '69928', '72090', '72894', '72938', '74332', '78948', '79315', '82435', '86921', '97886', '98055', '108259', '111694', '111835', '111955', '115753']
+    }
+}
+)
+
+MAP_REPO_TO_TEST_FRAMEWORK.update(
+{
+    'pytorch/pytorch': 'pytest --no-header -rA --tb=no -p no:cacheprovider'
+}
+)
+
+MAP_REPO_TO_REQS_PATHS.update(
+{
+    'pytorch/pytorch': [
+        'requirements.txt'
+    ]
+}
+)
+
+MAP_REPO_TO_ENV_YML_PATHS.update(
+{
+    'pytorch/pytorch': []
+}
+)

@@ -2,10 +2,10 @@ import re
 import json
 import os
 from datasets import load_from_disk, load_dataset
-from swebench.harness.constants import APPLY_PATCH_PASS, KEY_INSTANCE_ID
-from swebench.metrics.log_parsers import MAP_REPO_TO_PARSER, TestStatus
+from log_parsers import MAP_REPO_TO_PARSER, TestStatus
 from typing import Tuple
-
+APPLY_PATCH_PASS = ">>>>> Applied Patch"
+KEY_INSTANCE_ID = "instance_id"
 
 def get_diffs(sm_1: dict, sm_2: dict) -> dict:
     """

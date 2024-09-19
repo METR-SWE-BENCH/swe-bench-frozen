@@ -7,7 +7,7 @@ import subprocess
 from datetime import datetime
 from dotenv import load_dotenv
 from git import Repo
-from swebench.harness.constants import (
+from constants import (
     MAP_REPO_TO_REQS_PATHS,
     MAP_REPO_TO_ENV_YML_PATHS,
     SWE_BENCH_URL_RAW,
@@ -249,7 +249,7 @@ def get_test_directives(instance: dict) -> list:
     return directives
 
 
-def clone_repo(repo_name: str, path: str, token: str = None) -> bool:
+def clone_repo(repo_name: str, path: str, token: str = None, org: str = "swe-bench") -> bool:
     """
     Wrapper for cloning repo from swe-bench organization
 
@@ -264,7 +264,7 @@ def clone_repo(repo_name: str, path: str, token: str = None) -> bool:
         if token is None:
             token = os.environ.get("GITHUB_TOKEN", "git")
         repo_url = (
-            f"https://{token}@github.com/swe-bench/"
+            f"https://{token}@github.com/{org}/"
             + repo_name.replace("/", "__")
             + ".git"
         )
@@ -288,6 +288,12 @@ def split_instances(input_list: list, n: int) -> list:
     avg_length = len(input_list) // n
     remainder = len(input_list) % n
     result, start = [], 0
+
+    print(f"Spliting list of length {len(input_list)} into {n} sublists")
+    if n == 0:
+        raise Exception("List is Empty")
+    if n == 1:
+        return [input_list]
 
     for i in range(n):
         length = avg_length + 1 if i < remainder else avg_length

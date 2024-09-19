@@ -1,9 +1,10 @@
-import argparse, os
+import argparse
+import os
 
 from multiprocessing import Pool, cpu_count
-from swebench.harness.constants import PatchType
-from swebench.harness.context_manager import TaskEnvContextManager, TestbedContextManager
-from swebench.harness.utils import get_instances, split_instances, DotDict
+from constants import PatchType
+from context_manager import TaskEnvContextManager, TestbedContextManager
+from utils import get_instances, split_instances, DotDict
 
 
 SKIP_INSTANCES = {"pytest-dev/pytest": ["6387", "7956", "3805"]}
@@ -13,24 +14,24 @@ def validate_args(args):
     """
     Validation for command line arguments
     """
-    if not os.path.exists(args.instances_path):
-        raise ValueError(f"Could not find instances file at {args.instances_path}")
-    if not os.path.exists(args.log_dir):
-        raise ValueError(f"Could not find log directory at {args.log_dir}")
+    if not os.path.exists(args['instances_path']):
+        raise ValueError(f"Could not find instances file at {args['instances_path']}")
+    if not os.path.exists(args['log_dir']):
+        raise ValueError(f"Could not find log directory at {args['log_dir']}")
 
     # If value is provided, check that the paths exist
-    if args.path_conda is not None and not os.path.exists(args.path_conda):
-        raise ValueError(f"Could not find conda installation at {args.path_conda}")
-    if args.testbed is not None and not os.path.exists(args.testbed):
-        raise ValueError(f"Could not find testbed at {args.testbed}")
-    if args.temp_dir is not None and not os.path.exists(args.temp_dir):
-        raise ValueError(f"Could not find temporary directory at {args.temp_dir}")
+    if args['path_conda'] is not None and not os.path.exists(args['path_conda']):
+        raise ValueError(f"Could not find conda installation at {args['path_conda']}")
+    if args['testbed'] is not None and not os.path.exists(args['testbed']):
+        raise ValueError(f"Could not find testbed at {args['testbed']}")
+    if args['temp_dir'] is not None and not os.path.exists(args['temp_dir']):
+        raise ValueError(f"Could not find temporary directory at {args['temp_dir']}")
 
     # If value is provided, check that it is valid
-    if args.timeout is not None and args.timeout < 0:
-        raise ValueError(f"Timeout must be a positive integer")
-    if args.num_workers is not None and args.num_workers < 1:
-        raise ValueError(f"Number of workers must be a positive integer")
+    if args['timeout'] is not None and args['timeout'] < 0:
+        raise ValueError("Timeout must be a positive integer")
+    if args['num_workers'] is not None and args['num_workers'] < 1:
+        raise ValueError("Number of workers must be a positive integer")
 
 
 def verify_task_instances(data: dict):
@@ -54,6 +55,7 @@ def verify_task_instances(data: dict):
             verbose=data_dict.verbose,
             timeout=data_dict.timeout,
             log_suffix=data_dict.log_suffix,
+            
         ) as tcm:
             if (
                 task_instance["repo"] in SKIP_INSTANCES
@@ -97,6 +99,7 @@ def setup_testbed(data: dict):
         temp_dir=data_dict.temp_dir,
         timeout=data_dict.timeout,
         verbose=data_dict.verbose,
+        org=data_dict.org
     ) as tcm:
         distributed_task_list = tcm.get_distributed_tasks()
         for task_list in distributed_task_list:
@@ -118,17 +121,17 @@ def main(args):
     """
     Splits task instances into multiple groups if num_workers > 1
     """
-    if args.num_workers is None:
-        args.num_workers = cpu_count()
+    if args['num_workers'] is None:
+        args['num_workers'] = cpu_count()
 
-    task_instances = get_instances(args.instances_path)
-    task_instances_groups = split_instances(task_instances, args.num_workers)
+    task_instances = get_instances(args['instances_path'])
+    task_instances_groups = split_instances(task_instances, args['num_workers'])
 
     data_groups = [
         {
             "task_instances": g,
             "func": verify_task_instances,
-            **vars(args),
+            **args,
         }
         for g in task_instances_groups
     ]
@@ -136,11 +139,11 @@ def main(args):
     for group in data_groups:
         del group["instances_path"]
 
-    if args.num_workers == 1:
+    if args['num_workers'] == 1:
         setup_testbed(data_groups[0])
         return
 
-    pool = Pool(processes=args.num_workers)
+    pool = Pool(processes=args['num_workers'])
     pool.map(setup_testbed, data_groups)
     pool.close()
     pool.join()
@@ -160,4 +163,4 @@ if __name__ == "__main__":
     parser.add_argument("--num_workers", type=int, default=None, help="(Optional) Number of workers")
     args = parser.parse_args()
     validate_args(args)
-    main(args)
+    main(vars(args))

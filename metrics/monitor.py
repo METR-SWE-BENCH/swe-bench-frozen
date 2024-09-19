@@ -1,17 +1,16 @@
 import glob
 import os
 
-from swebench.harness.constants import (
-    APPLY_PATCH_FAIL,
-    APPLY_PATCH_PASS,
-    TESTS_TIMEOUT,
-)
-from swebench.metrics.getters import (
+
+TESTS_TIMEOUT = ">>>>> Tests Timed Out"
+APPLY_PATCH_FAIL = ">>>>> Patch Apply Failed"
+APPLY_PATCH_PASS = ">>>>> Applied Patch"
+from getters import (
     log_path_to_sms,
     get_diffs,
     get_repo_from_lp,
 )
-from swebench.metrics.log_parsers import MAP_REPO_TO_PARSER
+from log_parsers import MAP_REPO_TO_PARSER
 from typing import Tuple
 
 

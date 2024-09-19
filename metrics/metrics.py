@@ -1,5 +1,5 @@
 from statistics import mean
-from swebench.metrics.constants import (
+from constants import (
     FAIL_TO_PASS,
     PASS_TO_PASS,
     ResolvedStatus,

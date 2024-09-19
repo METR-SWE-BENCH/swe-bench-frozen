@@ -1,7 +1,7 @@
 import logging, os, platform, subprocess, json
 
 from logging import DEBUG, INFO, WARNING, ERROR, CRITICAL
-from swebench.harness.constants import (
+from constants import (
     APPLY_PATCH_FAIL,
     APPLY_PATCH_PASS,
     DEFAULT_CONDA_LINK,
@@ -21,7 +21,7 @@ from swebench.harness.constants import (
     TESTS_ERROR,
     PatchType,
 )
-from swebench.harness.utils import (
+from utils import (
     clone_repo,
     get_conda_env_names,
     get_environment_yml,
@@ -106,6 +106,7 @@ class TestbedContextManager:
         testbed: str = None,
         timeout: int = None,
         verbose: bool = False,
+        org: str = "swe-bench"
     ):
         """
         Initialize testbed context. Creates temporary directories and groups task instances
@@ -128,6 +129,7 @@ class TestbedContextManager:
         self.old_dir = os.getcwd()
         self.timeout = timeout
         self.verbose = verbose
+        self.org = org
         self.exec = ExecWrapper(
             subprocess_args={
                 "check": True,
@@ -321,7 +323,7 @@ class TestbedContextManager:
                 # Clone github per repo/version
                 repo_path = os.path.join(self.testbed, env_name)
                 if not os.path.exists(repo_path):
-                    if clone_repo(repo, repo_path):
+                    if clone_repo(repo, repo_path, org=self.org):
                         self.log.write(f"Cloned {repo} to {repo_path}")
                     else:
                         raise Exception(f"Failed to clone {repo} to {repo_path}")

@@ -12,14 +12,14 @@ import subprocess
 
 from datasets import load_dataset
 from multiprocessing import Pool
-from swebench.harness.constants import (
+from constants import (
     KEY_INSTANCE_ID,
     KEY_MODEL,
     KEY_PREDICTION,
 )
-from swebench.harness.engine_evaluation import main as eval_engine
-from swebench.harness.utils import get_instances
-from swebench.metrics.getters import get_eval_refs
+from .engine_evaluation import main as eval_engine
+from .utils import get_instances
+from ..metrics.getters import get_eval_refs
 
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
